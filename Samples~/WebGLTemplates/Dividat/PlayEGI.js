@@ -1,11 +1,14 @@
 // Dividat Play EGI
 ;(function() {
     var play = null
+    var commandQueue = []
 
     // Helper to send commands
     function sendCommand(cmd) {
         if (play) {
             play.postMessage(cmd, '*')
+        } else {
+            commandQueue.push(cmd)
         }
     }
 
@@ -19,6 +22,10 @@
         switch (signal.type) {
             case 'SetupEGI':
                 // This signal is only to setup the interface it is not forwarded to consumers
+                // Forward any commands sent before connection had been established
+                while (commandQueue.length > 0) {
+                    play.postMessage(commandQueue.shift(), '*')
+                }
                 break
 
             default:
@@ -48,12 +55,14 @@
     }
 
     window.PlayEGI = {
-        send: sendCommand,
         ready: () => {
             sendCommand({ type: 'Ready' })
         },
         pong: () => {
             sendCommand({ type: 'Pong' })
+        },
+        log: entry => {
+            sendCommand({ type: 'Log', entry: entry })
         },
         finish: (metrics, memory) => {
             metrics = metrics || {}
