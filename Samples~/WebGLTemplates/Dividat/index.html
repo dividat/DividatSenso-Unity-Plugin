@@ -89,7 +89,7 @@
   </head>
 
   <body>
-    <div id="gameContainer"></div>
+    <div id="gameContainer" data-build-url="%UNITY_WEBGL_BUILD_URL%"></div>
     <div id="loader">
       <img src="%UNITY_CUSTOM_GAME_NAME%Logo.png" class="gamelogo" alt="%UNITY_CUSTOM_GAME_NAME%">
       <progress class="progress" max="1">0 %</progress>
@@ -98,24 +98,7 @@
 
     <script src="PlayEGI.js"></script>
     <script src="%UNITY_WEBGL_LOADER_URL%"></script>
-    <script>
-    var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%", {onProgress: UnityProgress});
-    function UnityProgress(gameInstance, progress) {
-      if (!gameInstance.Module) {
-        return;
-      }
-      const loader = document.querySelector("#loader");
-      const progressBar = document.querySelector("#loader .progress");
-      progressBar.value = progress;
-      progressBar.innerText = Math.floor(progress * 100) + " %";
-
-      if (progress === 1 && !gameInstance.removeTimeout) {
-        gameInstance.removeTimeout = setTimeout(function() {
-          loader.className = "hidden";
-        }, 2000);
-      }
-    }
-    </script>
+    <script src="main.js"></script>
   </body>
 
 </html>
